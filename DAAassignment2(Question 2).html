@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linear Search Analysis</title>
+</head>
+<body>
+    <h1>Lab Question 2: Linear Search Comparison Counter</h1>
+    
+    <button onclick="runAnalysis()">Run Analysis</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        let comparisonCount = 0;
+        
+        function linearSearch(arr, target) {
+            comparisonCount = 0;
+            for (let i = 0; i < arr.length; i++) {
+                comparisonCount++;
+                if (arr[i] === target) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        function runBestCase(size) {
+            let arr = [];
+            for (let i = 0; i < size; i++) {
+                arr.push(i);
+            }
+            linearSearch(arr, 0); // target is first element
+            return comparisonCount;
+        }
+        
+        function runWorstCase(size) {
+            let arr = [];
+            for (let i = 0; i < size; i++) {
+                arr.push(i);
+            }
+            linearSearch(arr, size + 1); // target not in array
+            return comparisonCount;
+        }
+        
+        function runAverageCase(size) {
+            let arr = [];
+            for (let i = 0; i < size; i++) {
+                arr.push(i);
+            }
+            let totalComparisons = 0;
+            let trials = 100;
+            
+            for (let trial = 0; trial < trials; trial++) {
+                let randomTarget = Math.floor(Math.random() * size);
+                linearSearch(arr, randomTarget);
+                totalComparisons += comparisonCount;
+            }
+            
+            return Math.round(totalComparisons / trials);
+        }
+        
+        function runAnalysis() {
+            let sizes = [100, 500, 1000, 5000, 10000];
+            let results = [];
+            
+            document.getElementById('results').innerHTML = '<h2>Running analysis...</h2>';
+            
+            for (let size of sizes) {
+                let best = runBestCase(size);
+                let worst = runWorstCase(size);
+                let average = runAverageCase(size);
+                
+                results.push({
+                    size: size,
+                    best: best,
+                    average: average,
+                    worst: worst
+                });
+            }
+            
+            displayResults(results);
+        }
+        
+        function displayResults(results) {
+            let html = '<h2>RESULTS</h2>';
+            
+            html += '<h3>Table of Results:</h3>';
+            html += '<table border="1">';
+            html += '<tr><th>Input Size (n)</th><th>Best Case</th><th>Average Case</th><th>Worst Case</th><th>Theoretical Best</th><th>Theoretical Avg</th><th>Theoretical Worst</th></tr>';
+            
+            for (let result of results) {
+                let theoreticalBest = 1;
+                let theoreticalAvg = Math.round(result.size / 2);
+                let theoreticalWorst = result.size;
+                
+                html += '<tr>';
+                html += '<td>' + result.size + '</td>';
+                html += '<td>' + result.best + '</td>';
+                html += '<td>' + result.average + '</td>';
+                html += '<td>' + result.worst + '</td>';
+                html += '<td>' + theoreticalBest + '</td>';
+                html += '<td>' + theoreticalAvg + '</td>';
+                html += '<td>' + theoreticalWorst + '</td>';
+                html += '</tr>';
+            }
+            
+            html += '</table>';
+            
+            html += '<h3>Analysis:</h3>';
+            html += '<p><b>Best Case (O(1)):</b> Target found at first position. Always 1 comparison regardless of input size.</p>';
+            html += '<p><b>Average Case (O(n/2)):</b> Target found somewhere in middle on average. Comparisons grow linearly with input size.</p>';
+            html += '<p><b>Worst Case (O(n)):</b> Target at end or not found. Comparisons equal input size.</p>';
+            
+            html += '<h3>Linear Growth Observation:</h3>';
+            html += '<p>As input size increases:</p>';
+            html += '<ul>';
+            html += '<li>Best case stays constant at 1</li>';
+            html += '<li>Average case increases by approximately n/2</li>';
+            html += '<li>Worst case increases by exactly n</li>';
+            html += '</ul>';
+            
+            html += '<h3>Empirical vs Theoretical:</h3>';
+            html += '<p>The empirical results match theoretical expectations:</p>';
+            html += '<ul>';
+            html += '<li>Best case: Always 1 comparison (O(1))</li>';
+            html += '<li>Average case: Approximately n/2 comparisons (O(n/2) = O(n))</li>';
+            html += '<li>Worst case: Exactly n comparisons (O(n))</li>';
+            html += '</ul>';
+            
+            html += '<h3>Simple Text Plot:</h3>';
+            html += '<pre>';
+            html += 'Comparisons vs Input Size\n';
+            html += '------------------------\n';
+            html += 'Size    Best    Avg     Worst\n';
+            for (let result of results) {
+                html += result.size.toString().padEnd(8) + 
+                        result.best.toString().padEnd(8) + 
+                        result.average.toString().padEnd(8) + 
+                        result.worst.toString().padEnd(8) + '\n';
+            }
+            html += '</pre>';
+            
+            document.getElementById('results').innerHTML = html;
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
